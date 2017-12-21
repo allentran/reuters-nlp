@@ -65,7 +65,7 @@ class ReutersPaginator(object):
         self.end_date = end_date
 
     @staticmethod
-    def _get_article(url, title, date, regex: re._pattern_type):
+    def _get_article(url, title, date, time, regex: re._pattern_type):
         if '/video/' in url:
             return
 
@@ -91,6 +91,7 @@ class ReutersPaginator(object):
                     json.dump(
                         {
                             'text': text,
+                            'time': time,
                             'date': date,
                             'title': title
                         },
@@ -150,7 +151,7 @@ class ReutersPaginator(object):
             titles = json.load(f)
         random.shuffle(titles)
         for title in titles:
-            self._get_article(title['url'], title['title'], title['date'], regex)
+            self._get_article(title['url'], title['title'], title['date'], title['time'], regex)
 
 
 def main():
