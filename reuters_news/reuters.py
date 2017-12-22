@@ -80,9 +80,11 @@ class ReutersPaginator(object):
         if r.ok:
             soup = BeautifulSoup(r.content, 'lxml')
             divs = filter(lambda x: x.get('class'), soup.find_all('div'))
-            divs = list(filter(lambda x: x['class'][0].startswith('ArticleBody_container_'), divs))
+            divs = list(filter(lambda x: x['class'][0].startswith('StandardArticleBody_body'), divs))
 
-            assert len(divs) == 1
+            if len(divs) != 1:
+                logging.warning('Problem with URL: %s', url)
+                return
 
             text = ' '.join([p.text.strip() for p in divs[0].find_all('p')])
 
@@ -98,6 +100,10 @@ class ReutersPaginator(object):
                         f,
                     )
                     logging.info('%s - %s', title, date)
+            else:
+                logging.warning('No text: %s', url)
+        else:
+            logging.warning('Request failed: %s', url)
 
     @staticmethod
     def slug(text):
